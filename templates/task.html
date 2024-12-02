@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do Application - Tasks</title>
+  <style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f9f9f9;
+        margin: 0;
+        padding: 0;
+        background-image: url(images.jpg);
+        background-repeat: no-repeat;
+        background-size: cover;
+    }
+
+    .container {
+        max-width: 600px;
+        margin: 50px auto;
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        background-color: #ede377;
+    }
+
+    h1 {
+        text-align: center;
+        color: #333;
+    }
+
+    .form-group {
+        display: flex;
+        margin-bottom: 15px;
+        gap: 10px;
+    }
+
+    input[type="text"], input[type="password"] {
+        width: 80%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+        box-sizing: border-box;
+    }
+
+    button {
+        padding: 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+        background-color: #0056b3;
+    }
+
+    .task-list {
+        margin-top: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px; /* Adds spacing between tasks */
+        
+    }
+
+    .task {
+        display: flex;
+        align-items: center;
+        justify-content: space-between; /* Ensures all elements stay on one line */
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background-color: #f8f9fa;
+        gap: 10px;
+        position: relative;
+    }
+
+    .task label {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-grow: 1;
+    }
+
+    .task input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+    }
+
+    .task input[type="text"] {
+        flex-grow: 1; /* Makes the input field take remaining space */
+        padding: 8px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+    }
+
+    .task button {
+        padding: 5px 10px;
+        font-size: 14px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .task button.update {
+        background-color: #007bff;
+        color: white;
+        
+    }
+
+    .task button.update:hover {
+        background-color: #0056b3;
+    }
+
+    .task button.delete {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .task button.delete:hover {
+        background-color: #c82333;
+    }
+
+    .logout {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .logout a {
+        color: #007bff;
+        text-decoration: none;
+    }
+
+    .logout a:hover {
+        text-decoration: underline;
+    }
+    .save{
+        display: inline;
+        margin-left: 90%;
+        margin-bottom: 4%;
+        position: absolute;
+        top:25%;
+        right:20%;
+    }
+    
+</style>
+
+    
+    
+</head>
+<body>
+    <div class="container">
+        <h1>To-Do Tasks</h1>
+        
+        <!-- Form to add a new task -->
+        <form action="{{ url_for('add_task') }}" method="POST">
+            <input type="text" name="task_description" placeholder="Add a new task" required>
+            <button type="submit">Add Task</button>
+        </form>
+        
+        <!-- Task list -->
+        <div class="task-list">
+            {% for task in tasks %}
+                <div class="task {% if task[3] %}completed{% endif %}">
+                    <!-- Checkbox to toggle completion -->
+                    <form action="{{ url_for('toggle_task', task_id=task[0]) }}" method="POST" style="display:inline;">
+                        <label>
+                            <input type="checkbox" {% if task[3] %}checked{% endif %} onchange="this.form.submit()">
+                            {{ task[2] }}
+                        </label>
+                    </form>
+                    
+                    <!-- Edit Task -->
+                    <form action="{{ url_for('edit_task', task_id=task[0]) }}" method="POST" style="display:inline;">
+                        <input type="text" class="editbox"name="updated_task" value="{{ task[2] }}" required>
+                        <div class="save">
+                            <button type="submit" >Save</button>
+                        </div>
+                        
+                    </form>
+
+                    <!-- Delete Task -->
+                    <form action="{{ url_for('delete_task', task_id=task[0]) }}" method="POST" style="display:inline;">
+                        <button type="submit" style="background-color: #dc3545; color: white;">Delete</button>
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Logout link -->
+        <div class="logout">
+            <a href="{{ url_for('logout') }}">Logout</a>
+        </div>
+    </div>
+</body>
+</html>
